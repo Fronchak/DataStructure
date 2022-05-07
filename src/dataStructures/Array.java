@@ -2,95 +2,12 @@ package dataStructures;
 
 import util.DSException;
 
-public class Array<T> {
-
-	private T[] elements;
-	private int count;
+public class Array<T> extends StaticStructure<T>{
 	
 	public Array(int size) {
-		this.elements = (T[]) new Object[size];
-		this.count = 0;
+		super(size);
 	}
-	
-	public void add(T element) {
-		/*
-		if(isFull()) {
-			throw new DSException("Array is already full!");
-		}*/
-		expandSize();
-		addElement(element);
-	}
-	
-	private boolean isFull() {
-		return count == elements.length;
-	}
-	
-	private void addElement(T element) {
-		//expandSize();
-		this.elements[count] = element;
-		count++;
-	}
-	
-	private void expandSize() {
-		if(count == elements.length) {
-			T[] aux = (T[]) new Object[count + 1];
-			for(int i = 0; i < count; i++) {
-				aux[i] = elements[i];
-			}
-			this.elements = aux;
-		}
-	}
-	
-	public void add(T element, int position) {
-		expandSize();
-		if(!isPositionValid(position)) { throw new DSException("Invalid Position!"); }
-		if(isFull()) { throw new DSException ("Array is already full!"); }
-		if(position == count) { addElement(element); }
-		else {
-			moveForward(position);
-			this.elements[position] = element;
-			count++;
-		}
-	}
-	
-	private boolean isPositionValid(int position) {
-		return (position >= 0 && position <= count);
-	}
-	
-	private void moveForward(int position) {
-		if(this.elements[position + 1] != null) {
-			moveForward(position + 1);
-		}
-		this.elements[position + 1] = this.elements[position];
-		//this.elements[position] = null;
-	}
-	
-	public int size() {
-		return count;
-	}
-	
-	@Override
-	public String toString() {
-		if(isEmpty()) { return ""; }
-		return getStringArray();
-	}
-	
-	public boolean isEmpty() {
-		return this.count == 0;
-	}
-	
-	private String getStringArray() {
-		StringBuffer sb = new StringBuffer();
-		for(int i = 0; i < size(); i++) {
-			sb.append(toStringElement(i));
-		}
-		return sb.toString();
-	}
-	
-	private String toStringElement(int i) {
-		return "Array[" + i + "] = " + this.elements[i] + "\n";
-	}
-	
+
 	public T get(int position) {
 		if(!isPositionValid(position)) {throw new DSException("Invalid Position!");}
 		if(this.elements[position] == null) {throw new DSException("Position is null!");}
@@ -98,10 +15,7 @@ public class Array<T> {
 	}
 	
 	public boolean exist(T element) {
-		for(int i = 0; i < count; i++) {
-			if(this.elements[i].equals(element)) { return true; }
-		}
-		return false;
+		return indexOf(element) != -1;
 	}
 	
 	public void removeAt(int position) {
@@ -111,6 +25,24 @@ public class Array<T> {
 		}
 		this.elements[count - 1] = null;
 		this.count --;
+	}
+
+	public int indexOf(T element) {
+		for(int i = 0; i < count; i++) {
+			if(elements[i].equals(element)) { return i; }
+		}
+		return -1;
+	}
+	
+	public int lastIndexOf(T element) {
+		for(int i = count - 1; i >= 0; i--) {
+			if(elements[i].equals(element)) { return i; }
+		}
+		return -1;
+	}
+	
+	public void remove(T element) {
+		 removeAt(indexOf(element));
 	}
 
 }
