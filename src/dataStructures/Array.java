@@ -2,20 +2,22 @@ package dataStructures;
 
 import util.DSException;
 
-public class Array {
+public class Array<T> {
 
-	private String[] elements;
+	private T[] elements;
 	private int count;
 	
 	public Array(int size) {
-		this.elements = new String[size];
+		this.elements = (T[]) new Object[size];
 		this.count = 0;
 	}
 	
-	public void add(String element) {
+	public void add(T element) {
+		/*
 		if(isFull()) {
 			throw new DSException("Array is already full!");
-		}
+		}*/
+		expandSize();
 		addElement(element);
 	}
 	
@@ -23,12 +25,24 @@ public class Array {
 		return count == elements.length;
 	}
 	
-	private void addElement(String element) {
+	private void addElement(T element) {
+		//expandSize();
 		this.elements[count] = element;
 		count++;
 	}
 	
-	public void add(String element, int position) {
+	private void expandSize() {
+		if(count == elements.length) {
+			T[] aux = (T[]) new Object[count + 1];
+			for(int i = 0; i < count; i++) {
+				aux[i] = elements[i];
+			}
+			this.elements = aux;
+		}
+	}
+	
+	public void add(T element, int position) {
+		expandSize();
 		if(!isPositionValid(position)) { throw new DSException("Invalid Position!"); }
 		if(isFull()) { throw new DSException ("Array is already full!"); }
 		if(position == count) { addElement(element); }
@@ -48,7 +62,7 @@ public class Array {
 			moveForward(position + 1);
 		}
 		this.elements[position + 1] = this.elements[position];
-		this.elements[position] = null;
+		//this.elements[position] = null;
 	}
 	
 	public int size() {
@@ -77,17 +91,26 @@ public class Array {
 		return "Array[" + i + "] = " + this.elements[i] + "\n";
 	}
 	
-	public String get(int position) {
+	public T get(int position) {
 		if(!isPositionValid(position)) {throw new DSException("Invalid Position!");}
 		if(this.elements[position] == null) {throw new DSException("Position is null!");}
 		return this.elements[position];
 	}
 	
-	public boolean exist(String element) {
+	public boolean exist(T element) {
 		for(int i = 0; i < count; i++) {
 			if(this.elements[i].equals(element)) { return true; }
 		}
 		return false;
+	}
+	
+	public void removeAt(int position) {
+		if(position < 0 || position >= count) { throw new DSException ("Invalid position!"); }
+		for(int i = position; i < count - 1; i++) {
+			this.elements[i] = this.elements[i + 1];
+		}
+		this.elements[count - 1] = null;
+		this.count --;
 	}
 
 }
