@@ -21,13 +21,13 @@ public class StaticStructure<T> {
 	public String toString() {
 		if(isEmpty()) { return "[]"; }
 		String arrayString = "[" + elements[0];
-		for(int i = 1; i < this.count - 1; i++) {
+		for(int i = 1; i < this.count; i++) {
 			arrayString = arrayString + ", " + elements[i];
 		}
 		return arrayString + "]";
 	}
 	
-	public void add(T element) {
+	protected void add(T element) {
 		expandSize();
 		this.elements[this.count] = element;
 		this.count++;
@@ -43,7 +43,7 @@ public class StaticStructure<T> {
 	
 	protected void add(T element, int position) {
 		expandSize();
-		if(!isPositionValid(position)) { throw new DSException("Invalid Position!"); }
+		if(!isPositionValidToAdd(position)) { throw new DSException("Invalid Position!"); }
 		if(isFull()) { throw new DSException ("Array is already full!"); }
 		if(position == count) { add(element); }
 		else {
@@ -53,8 +53,12 @@ public class StaticStructure<T> {
 		}
 	}
 	
-	protected boolean isPositionValid(int position) {
+	private boolean isPositionValidToAdd(int position) {
 		return (position >= 0 && position <= count);
+	}
+	
+	private boolean isPositionValidToGet(int position) {
+		return (position >= 0 && position < count);
 	}
 	
 	protected void moveForward(int position) {
@@ -65,7 +69,7 @@ public class StaticStructure<T> {
 		//this.elements[position] = null;
 	}
 	
-	protected boolean isFull() {
+	private boolean isFull() {
 		return this.count == elements.length;
 	}
 	
@@ -82,5 +86,20 @@ public class StaticStructure<T> {
 	public void clear() {
 		this.elements = (T[]) new Object[this.count];
 		this.count = 0;
+	}
+	
+	protected T get(int position) {
+		if(!isPositionValidToGet(position)) {throw new DSException("Invalid Position!");}
+		if(this.elements[position] == null) {throw new DSException("Position is null!");}
+		return this.elements[position];
+	}
+	
+	protected void removeAt(int position) {
+		if(!isPositionValidToGet(position)) { throw new DSException ("Invalid position!"); }
+		for(int i = position; i < count - 1; i++) {
+			this.elements[i] = this.elements[i + 1];
+		}
+		this.elements[count - 1] = null;
+		this.count --;
 	}
 }
